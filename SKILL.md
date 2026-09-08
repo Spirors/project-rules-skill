@@ -268,9 +268,16 @@ rule and a user instruction conflict, ask before proceeding.
   top 3 next actions, blockers.
 - **Append a new entry to `project_rules/SESSION_LOG.md`** dated and
   titled so a future session can scan the latest entry alone — don't
-  force them to re-read the whole log. Older entries rotate to
-  `project_rules/archive/SESSION_LOG_ARCHIVE.md` once the live log
-  exceeds `{{SESSION_LOG_ROTATION_ENTRIES}}` entries.
+  force them to re-read the whole log.
+- **SESSION_LOG.md uses a hybrid layout to keep session-start reads
+  cheap.** The latest entry stays in full (it's the one agents read
+  per the AGENTS.md Session Start protocol); older entries in the
+  live file are pointers — title, date, one-line summary, link to
+  `archive/sessions/<slug>.md`. The verbose detail (test breakdowns,
+  commit hashes, file:line references) lives in the per-session
+  archive file. When the live file exceeds
+  `{{SESSION_LOG_ROTATION_ENTRIES}}` entries, drop the oldest pointer
+  — the archive file is the source of truth for the dropped session.
 - **Record durable decisions in `project_rules/DECISIONS.md` the
   moment you confirm them** — not from memory later. Each entry keeps
   the core problem, the decision, and especially the rationale
