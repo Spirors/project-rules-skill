@@ -276,6 +276,14 @@ rule and a user instruction conflict, ask before proceeding.
   the core problem, the decision, and especially the rationale
   ("mistakes to avoid" framing). Don't delete superseded entries; mark
   them superseded so the history of *why* stays intact.
+- **DECISIONS.md is a pointer index, not a wall of prose.** Each entry
+  in the live file is a short pointer — title, date, status, one-
+  sentence summary, and a link. The verbose detail (code snippets,
+  test breakdowns, verification matrices, file:line references) lives
+  in `archive/decisions/<slug>.md`. Decisions do not rotate; they
+  accumulate. The pattern keeps the live file scannable at session
+  start while preserving the full rationale for when an agent is
+  actually implementing or debugging.
 - **Keep `project_rules/RUNBOOK.md` in sync with any operational-
   command change.** A runbook that drifts from the actual commands is
   worse than no runbook at all.
