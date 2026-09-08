@@ -6,7 +6,7 @@ gitignored). Use this file for anything that needs to survive across
 machines or a fresh checkout; use the local daily changelog for its
 quick local-audit purpose.
 
-> Older logs in archive/session-log-archive.md (once entries accumulate
+> Older logs in archive/SESSION_LOG_ARCHIVE.md (once entries accumulate
 > past `{{SESSION_LOG_ROTATION_ENTRIES}}`, the older ones rotate to that file).
 
 ---

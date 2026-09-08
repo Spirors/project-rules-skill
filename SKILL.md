@@ -17,7 +17,7 @@ this file). Defaults are shown in the table below.
 | `{{SERVER_COMMAND}}` | Command used to start the local dev server (and any sub-flags referenced). | `<server-start-command>` |
 | `{{FROZEN_HTML_DIR}}` | Directory holding reference HTML snapshots that must never be edited. | `archive` |
 | `{{DOC_LINE_THRESHOLD}}` | Line count at which `AGENTS.md` or a `project_rules/*.md` file is considered for a Documentation-hygiene self-check split. See Core rules → Documentation hygiene. | `200` |
-| `{{SESSION_LOG_ROTATION_ENTRIES}}` | Number of dated entries the live `project_rules/SESSION_LOG.md` may carry before older entries rotate to `project_rules/archive/session-log-archive.md`. | `10` |
+| `{{SESSION_LOG_ROTATION_ENTRIES}}` | Number of dated entries the live `project_rules/SESSION_LOG.md` may carry before older entries rotate to `project_rules/archive/SESSION_LOG_ARCHIVE.md`. | `10` |
 
 The skill body is project-agnostic by design. Repo-specific files
 (`app/`, `src/`, `static/js/`, etc.) are not mentioned by path — when a
@@ -269,7 +269,7 @@ rule and a user instruction conflict, ask before proceeding.
 - **Append a new entry to `project_rules/SESSION_LOG.md`** dated and
   titled so a future session can scan the latest entry alone — don't
   force them to re-read the whole log. Older entries rotate to
-  `project_rules/archive/session-log-archive.md` once the live log
+  `project_rules/archive/SESSION_LOG_ARCHIVE.md` once the live log
   exceeds `{{SESSION_LOG_ROTATION_ENTRIES}}` entries.
 - **Record durable decisions in `project_rules/DECISIONS.md` the
   moment you confirm them** — not from memory later. Each entry keeps
