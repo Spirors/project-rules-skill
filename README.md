@@ -12,20 +12,37 @@ scaffolding.
   hygiene. Subagents don't auto-inject `AGENTS.md`, so handing them
   the skill via the dispatch prompt is how the rules reach them.
 - **Fresh-repo bootstrap**. Invoke the skill in an empty repo and
-  it scaffolds `AGENTS.md` + `project_rules/` (HANDOFF, SESSION_LOG,
-  DECISIONS, RUNBOOK, ROADMAP) from the shipped `templates/` — every
-  file carries `{{...}}` placeholders the agent fills at bootstrap
-  time.
+  it scaffolds `AGENTS.md` + `project_rules/` from the shipped
+  `templates/` — nine seed files (HANDOFF, SESSION_LOG, DECISIONS,
+  RUNBOOK, ROADMAP, ARCHITECTURE, ARCHITECTURE_DETAILS, API, TESTING)
+  carry `{{...}}` placeholders the agent fills at bootstrap time.
+  See "Conditional docs" below for which to skip.
 - **Retrofit mode for existing repos.** Point the skill at a repo
   with an existing `AGENTS.md` (the common case). The skill
   classifies each section as (a) universal hard rule → propose
   merge into Core rules, (b) project-specific reference → extract
-  verbatim into the matching
-  `project_rules/{ARCHITECTURE,API,TESTING,DECISIONS}.md`, or
+  verbatim into the matching `project_rules/*.md`, or
   (c) stale/derivable content → flag for deletion. It then
   rewrites the root `AGENTS.md` down to hard-rule pointers plus a
   see-also index. **`project_rules/DECISIONS.md` is appended to,
   never clobbered** — the history of "why" stays intact.
+- **Documentation hygiene.** The skill enforces a
+  `{{DOC_LINE_THRESHOLD}}`-line self-check on `AGENTS.md` and the
+  `project_rules/*.md` files. When a file crosses the threshold *and*
+  has grown materially since its last edit, the skill proposes a
+  split in that same session (not deferred). The split follows the
+  Retrofit classifier — extract project-specific material to
+  `project_rules/`, hoist universal rules into Core, flag derivable
+  content for deletion. See Core rules → Documentation hygiene in
+  `SKILL.md` for the full rule.
+- **Pointer-archive patterns.** Two of the live files (`DECISIONS.md`
+  and `SESSION_LOG.md`) use a **live-index + archive** layout to keep
+  required-reads cheap. DECISIONS.md is a pointer index (each entry
+  → `archive/decisions/<slug>.md`); SESSION_LOG.md is a hybrid
+  (latest entry in full, older entries → `archive/sessions/<slug>.md`).
+  When the live file exceeds `{{SESSION_LOG_ROTATION_ENTRIES}}`
+  entries, the oldest pointer drops — the archive file is the
+  source of truth.
 - **Hands-off maintenance**. Once scaffolded, every rule in the
   skill maps to a maintenance action: update HANDOFF on session end,
   append SESSION_LOG entries as work happens, record decisions in
@@ -67,17 +84,39 @@ Core rules → Documentation hygiene in `SKILL.md`.
 ```
 project-rules/
 ├── SKILL.md                 # canonical rules + bootstrap instructions
+├── README.md                # this file
 ├── templates/               # seed files for fresh-repo bootstrap
 │   ├── AGENTS.md            #   session protocol stub
 │   ├── README.md            #   documents the template set
-│   └── project_rules/       #   the five living-doc seeds
-│       ├── HANDOFF.md
-│       ├── SESSION_LOG.md
-│       ├── DECISIONS.md
-│       ├── RUNBOOK.md
-│       └── ROADMAP.md
+│   └── project_rules/       #   the nine living-doc seeds
+│       │                    #   (five core + four conditional)
+│       ├── HANDOFF.md       #     session-to-session state        (core)
+│       ├── SESSION_LOG.md   #     append-only dated log           (core)
+│       ├── DECISIONS.md     #     durable decisions + rationale   (core)
+│       ├── RUNBOOK.md       #     operational commands            (core)
+│       ├── ROADMAP.md       #     phase-level plan                (core)
+│       ├── ARCHITECTURE.md          #  high-level overview     (conditional)
+│       ├── ARCHITECTURE_DETAILS.md  #  deep-dive per-module    (conditional)
+│       ├── API.md                   #  HTTP routes             (conditional)
+│       └── TESTING.md               #  test suite layout       (conditional)
 └── LICENSE
 ```
+
+## Conditional docs
+
+Four of the nine `project_rules/*.md` templates are conditional — only
+written if the project needs them. The bootstrap should ask which
+apply and skip the rest:
+
+| Template | When to include | When to skip |
+|----------|-----------------|--------------|
+| `ARCHITECTURE.md` | Almost always — most projects have a module layout worth documenting | Pure data / config repo with no code |
+| `ARCHITECTURE_DETAILS.md` | Only after `ARCHITECTURE.md` crosses the `{{DOC_LINE_THRESHOLD}}`-line split threshold (see SKILL.md Core rules → Documentation hygiene) | Most projects — created reactively when needed |
+| `API.md` | Project exposes an HTTP API | CLI tool, library, or background service with no HTTP surface |
+| `TESTING.md` | Project has a test suite | Toy project / experiment; tests are one-off |
+
+Edit `AGENTS.md` "See also" at bootstrap to drop the conditional files
+the project doesn't need.
 
 ## What the skill is NOT
 
